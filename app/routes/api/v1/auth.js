@@ -10,5 +10,8 @@ const authCtrl = require("./../../../controller/api/v1/authController");
     app.put("/verify-mail",authCtrl.verifyMail);
     app.put("/chargebee-save-user-detail",authCtrl.chargeBeeSaveUserDetail);
     app.post("/chargebee-checkout",authCtrl.chargeBeeCheckout);
+    app.put("/chargebee-network",authCtrl.chargeBeeGetNetwork);
+    app.put("/chargebee-network",authCtrl.chargeBeeUpdateNetwork);
+    
 return app;
 })();

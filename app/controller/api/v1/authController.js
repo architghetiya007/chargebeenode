@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const chargebee = require("chargebee");
 const nodemailer = require("nodemailer");
 const client = require('./../../../../database');
-
+const axios = require('axios');
 	// chargebee.configure({
 	// 	site: "differ-test",
 	// 	api_key: "test_wuz31AKbSdAacuv8lgv16toQ43cwqt0N2"
@@ -237,5 +237,62 @@ exports.chargeBeeCheckout = async (req, res) => {
 		res.status(200).json({ status: false, code: 400, message: 'catch error', data: e + "" });
 	}
 } 
+
+exports.chargeBeeGetNetwork = async (req, res) => {
+	try {
+		console.log(req.body,"body>>>>>>>>>");
+		chargebee.customer.list({
+			"email[is]": req.body.email
+		}).request(async function (error, result) {
+			if (error) {
+				console.log(error);
+				res.status(200).json({ status: false, code: 400, message: 'Error From Chargbee' });
+			}
+			else {
+				const networkData = await axios.get(`http://management-interface.differ.ca/api/v1/customer/${result.list[0].customer.id}/network`, {
+					headers: {
+						'Authorization': '8d13c8d9e3c69876865973d69c3a01a2c03e2cbe6cb1f154350dee0132b74729'
+					}
+				});
+				res.status(200).json({ status: true, code: 200, message: 'Network data',data:networkData.data });
+			}
+		})
+	}
+	catch (e) {
+		console.log(e, "????????");
+		res.status(200).json({ status: false, code: 400, message: 'catch error', data: e + "" });
+	}
+}
+
+exports.chargeBeeUpdateNetwork = async (req, res) => {
+	try {
+		console.log(req.body,"body>>>>>>>>>");
+		chargebee.customer.list({
+			"email[is]": req.body.email
+		}).request(async function (error, result) {
+			if (error) {
+				console.log(error);
+				res.status(200).json({ status: false, code: 400, message: 'Error From Chargbee' });
+			}
+			else {
+				const networkData = await axios.put(`http://management-interface.differ.ca/api/v1/customer/${result.list[0].customer.id}/network`, {
+					headers: {
+						'Authorization': '8d13c8d9e3c69876865973d69c3a01a2c03e2cbe6cb1f154350dee0132b74729'
+					},
+					data: {
+						ssid: 'Making PUT Requests with Axios',
+						wpa2_key: 'published'
+					}
+				});
+				res.status(200).json({ status: true, code: 200, message: 'Network data',data:networkData.data });
+			}
+		})
+	}
+	catch (e) {
+		console.log(e, "????????");
+		res.status(200).json({ status: false, code: 400, message: 'catch error', data: e + "" });
+	}
+}
+
 
 
