@@ -137,7 +137,6 @@ exports.chargeBeeListOfCustomer = async (req, res) => {
 
 exports.verifyMail = async (req, res) => {
 	try {
-		console.log(req.body,"body>>>>>>>>>>>>>>>>>>>>>");
 		chargebee.customer.list({
 			"email[is]":req.body.email
 		}).request(function (error, result) {
@@ -146,7 +145,6 @@ exports.verifyMail = async (req, res) => {
 				res.status(200).json({ status: false, code: 400, message: 'Invalid OTP'});
 			}
 			else {
-				console.log(result.list[0].customer,"customer>>>>>>>");
 				if (result.list[0].customer.cf_validation_code == req.body.FULL_OTP) {
 					chargebee.customer.update(result.list[0].customer.id,{
 						cf_validation_code : 1,
@@ -170,7 +168,7 @@ exports.verifyMail = async (req, res) => {
 	}
 }
 
-exports.chargeBeeSaveUserDetail = async (req, res) => {
+exports.login = async (req, res) => {
 	try {
 		let encryptedPass = md5(req.body.password);
 		console.log(req.body, "body>>>>>>>>>>>>>>>>>>>>>");
@@ -182,25 +180,34 @@ exports.chargeBeeSaveUserDetail = async (req, res) => {
 				res.status(200).json({ status: false, code: 400, message: 'Error From Chargbee' });
 			}
 			else {
-				console.log(result.list[0].customer.id, "customer>>>>>>>");
-				chargebee.customer.update(result.list[0].customer.id, {
+				let updateObj = { 
 					first_name: req.body.firstName,
 					last_name: req.body.lastName,
-					cf_password: encryptedPass,
 					cf_birthday: req.body.birthday,
 					billing_address: {
 						line1: req.body.serviceAddress
 					}
-				}).request(function (error, response) {
-					if (error) {
-						//handle error
-						console.log(error);
-						res.status(200).json({ status: false, code: 400, message: 'Error From Chargbee' });
+				};
+				if (result.list.length > 0) {
+
+					if (result.list[0].customer.cf_password == encryptedPass || result.list[0].customer.cf_password == undefined ) {
+					updateObj.cf_password = encryptedPass;
+						chargebee.customer.update(result.list[0].customer.id, updateObj).request(function (error, response) {
+							if (error) {
+								//handle error
+								console.log(error);
+								res.status(200).json({ status: false, code: 400, message: 'Error From Chargbee' });
+							} else {
+								let token = jwt.sign({id:result.list[0].customer.id,email:result.list[0].customer.email},process.env.JWT_SECRET,{ expiresIn: 60 * 60 *24 });
+								res.status(200).json({ status: true, code: 200, message: 'Information updated successfully',data:{ token:token} });
+							}
+						});
 					} else {
-						console.log(response);
-						res.status(200).json({ status: true, code: 200, message: 'Information updated successfully' });
+						res.status(200).json({ status: false, code: 401, message: 'Email and password does not match' });
 					}
-				});
+				} else {
+					res.status(200).json({ status: false, code: 401, message: 'Email Is not Register' });
+				}
 			}
 		});
 	}
@@ -240,7 +247,6 @@ exports.chargeBeeCheckout = async (req, res) => {
 
 exports.chargeBeeGetNetwork = async (req, res) => {
 	try {
-		console.log(req.body,"body>>>>>>>>>");
 		chargebee.customer.list({
 			"email[is]": req.body.email
 		}).request(async function (error, result) {
@@ -266,25 +272,28 @@ exports.chargeBeeGetNetwork = async (req, res) => {
 
 exports.chargeBeeUpdateNetwork = async (req, res) => {
 	try {
-		console.log(req.body,"body>>>>>>>>>");
 		chargebee.customer.list({
-			"email[is]": req.body.email
+			"email[is]": req.user.email
 		}).request(async function (error, result) {
 			if (error) {
 				console.log(error);
 				res.status(200).json({ status: false, code: 400, message: 'Error From Chargbee' });
 			}
 			else {
-				const networkData = await axios.put(`http://management-interface.differ.ca/api/v1/customer/${result.list[0].customer.id}/network`, {
-					headers: {
-						'Authorization': '8d13c8d9e3c69876865973d69c3a01a2c03e2cbe6cb1f154350dee0132b74729'
-					},
-					data: {
-						ssid: 'Making PUT Requests with Axios',
-						wpa2_key: 'published'
-					}
-				});
-				res.status(200).json({ status: true, code: 200, message: 'Network data',data:networkData.data });
+				if(result.list.length > 0) {
+					const networkData = await axios({
+						method: 'put',
+						url: `http://management-interface.differ.ca/api/v1/customer/${result.list[0].customer.id}/network`,
+						headers: {
+							'Authorization': '8d13c8d9e3c69876865973d69c3a01a2c03e2cbe6cb1f154350dee0132b74729'
+						},
+						data: {
+							ssid: req.body.ssid,
+							wpa2_key:  req.body.wpa2_key
+						}
+					});
+					res.status(200).json({ status: true, code: 200, message: 'Network data',data:networkData.data });
+				}
 			}
 		})
 	}
@@ -293,6 +302,33 @@ exports.chargeBeeUpdateNetwork = async (req, res) => {
 		res.status(200).json({ status: false, code: 400, message: 'catch error', data: e + "" });
 	}
 }
+
+exports.chargeBeeGetUserDetail = async (req, res) => {
+	try {
+		console.log(req.user.email,"body>>>>>>>>>");
+		chargebee.customer.list({ 
+			"email[is]": req.user.email
+		}).request(async function (error, result) {
+			if (error) {
+				console.log(error);
+				res.status(200).json({ status: false, code: 400, message: 'Error From Chargbee' });
+			}
+			else {
+				if (result.list.length > 0) {
+					res.status(200).json({ status: true, code: 200, message: 'User Information', data:result.list[0].customer });
+				} else {
+					res.status(200).json({ status: false, code: 204, message: 'User Information' });
+				}				
+			}
+		})
+	}
+	catch (e) {
+		console.log(e, "????????");
+		res.status(200).json({ status: false, code: 400, message: 'catch error', data: e + "" });
+	}
+}
+
+
 
 
 
