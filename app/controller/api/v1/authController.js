@@ -5,30 +5,16 @@ const chargebee = require("chargebee");
 const nodemailer = require("nodemailer");
 const client = require('./../../../../database');
 const axios = require('axios');
-	// chargebee.configure({
-	// 	site: "differ-test",
-	// 	api_key: "test_wuz31AKbSdAacuv8lgv16toQ43cwqt0N2"
-	// });
-
-	// chargebee.configure({
-	// 	site: "archit-test",
-	// 	api_key: "test_wuz31AKbSdAacuv8lgv16toQ43cwqt0N2"
-	// });
-
- chargebee.configure({
-		site: "archittest-test",
-		api_key: "test_ZQbcdpBTEEy8mUycxOM5CIvgPo0fcd3nsf"
-	});
 
 
-// chargebee.configure({
-// 	site: "architnew2-test",
-// 	api_key: "test_rY26HFiCmFbTpzyjDODpwxpIrvqZUpcX"
-// });
+chargebee.configure({
+		site: "archittest2-test",
+		api_key: "test_Y2LUzyYO2EIlGKRnUMOGgEqRK3hcxiNa"
+});
 
 exports.chargeBeeItemList = async (req, res) => {
 	try {
-		chargebee.item.list({
+		chargebee.item_price.list({
 			limit: 100
 		}).request(function (error, result) {
 			if (error) {
@@ -219,23 +205,24 @@ exports.login = async (req, res) => {
 
 exports.chargeBeeCheckout = async (req, res) => {
 	try {
+		console.log(req.body,"user>>>>>>>>>");
 		chargebee.hosted_page.checkout_new_for_items({
 			subscription_items : [
-			  {
-				item_price_id : "",	
-				unit_price : 100,
-			  },
-			  {
-				item_price_id : "cbdemo_additional_analytics",
-				quantity : 1  
-			  }]
+				{
+					item_price_id : req.body.price_id,
+					quantity : 1
+				}],
+				customer: { id: req.user.id },
+				redirect_url:'http://localhost:4200/differ-my-profile',
+				cancel_url:"http://localhost:4200/differ-checkout"
 		  }).request(function(error,result) {
 			if(error){
 			  //handle error
 			  console.log(error);
-			}else{
-			  console.log(result);
-			  var hosted_page = result.hosted_page;
+			  res.status(200).json({ status: false, code: 400, message: 'Error From Chargbee' });
+			}
+			else{
+			  res.status(200).json({ status: true, code: 200, message: 'Successfully checkout', data:result });
 			}
 		  });
 	}
@@ -304,6 +291,31 @@ exports.chargeBeeUpdateNetwork = async (req, res) => {
 }
 
 exports.chargeBeeGetUserDetail = async (req, res) => {
+	try {
+		console.log(req.user.email,"body>>>>>>>>>");
+		chargebee.customer.list({ 
+			"email[is]": req.user.email
+		}).request(async function (error, result) {
+			if (error) {
+				console.log(error);
+				res.status(200).json({ status: false, code: 400, message: 'Error From Chargbee' });
+			}
+			else {
+				if (result.list.length > 0) {
+					res.status(200).json({ status: true, code: 200, message: 'User Information', data:result.list[0].customer });
+				} else {
+					res.status(200).json({ status: false, code: 204, message: 'User Information' });
+				}				
+			}
+		})
+	}
+	catch (e) {
+		console.log(e, "????????");
+		res.status(200).json({ status: false, code: 400, message: 'catch error', data: e + "" });
+	}
+}
+
+exports.chargeBeeSubscriptionDetail = async (req, res) => {
 	try {
 		console.log(req.user.email,"body>>>>>>>>>");
 		chargebee.customer.list({ 
