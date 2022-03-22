@@ -340,7 +340,93 @@ exports.chargeBeeSubscriptionDetail = async (req, res) => {
 	}
 }
 
+exports.chargeBeeSubscriptionList = async (req, res) => {
+	try {
+		console.log(req.user.id,"body>>>>>>>>>");
+		chargebee.subscription.list({ 
+			"customer_id[is]": req.user.id
+		}).request(async function (error, result) {
+			if (error) {
+				console.log(error);
+				res.status(200).json({ status: false, code: 400, message: 'Error From Chargbee' });
+			}
+			else {
+				if (result.list.length > 0) {
+					res.status(200).json({ status: true, code: 200, message: 'subscription list', data: result.list });
+				} else {
+					res.status(200).json({ status: false, code: 204, message: 'subscription list' });
+				}				
+			}
+		})
+	}
+	catch (e) {
+		console.log(e, "????????");
+		res.status(200).json({ status: false, code: 400, message: 'catch error', data: e + "" });
+	}
+}
 
+exports.chargeBeeUpdateSubscription = async (req, res) => {
+	try {
+		console.log(req.user.id,"body>>>>>>>>>");
+		chargebee.hosted_page.checkout_existing_for_items({
+			subscription : {
+			  id : req.body.subscriptionId
+			  },
+			subscription_items : [
+			  {
+				item_price_id : req.body.itemPriceId,
+				quantity : 1,
+				// unit_price : 1000
+			  }]
+			}).request(async function (error, result) {
+			if (error) {
+				console.log(error);
+				res.status(200).json({ status: false, code: 400, message: 'Error From Chargbee' });
+			}
+			else {
+				if (result.hosted_page) {
+					res.status(200).json({ status: true, code: 200, message: 'update subscription',  data: result });
+				} else {
+					res.status(200).json({ status: false, code: 204, message: 'update subscription' });
+				}				
+			}
+		})
+	}
+	catch (e) {
+		console.log(e, "????????");
+		res.status(200).json({ status: false, code: 400, message: 'catch error', data: e + "" });
+	}
+}
+
+exports.chargeBeeChangeBillingDetail = async (req, res) => {
+	try {
+		console.log(req.user.id,"body>>>>>>>>>");
+		chargebee.hosted_page.update_payment_method({
+			card : {
+			  gateway_account_id : req.body.gatewayAccountId
+			  },
+			customer : {
+			  id : req.body.customerId
+			  }
+		  }).request(async function (error, result) {
+			if (error) {
+				console.log(error);
+				res.status(200).json({ status: false, code: 400, message: 'Error From Chargbee' });
+			}
+			else {
+				if (result.hosted_page) {
+					res.status(200).json({ status: true, code: 200, message: 'update subscription',  data: result });
+				} else {
+					res.status(200).json({ status: false, code: 204, message: 'update subscription' });
+				}				
+			}
+		})
+	}
+	catch (e) {
+		console.log(e, "????????");
+		res.status(200).json({ status: false, code: 400, message: 'catch error', data: e + "" });
+	}
+}
 
 
 

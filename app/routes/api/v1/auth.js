@@ -13,6 +13,9 @@ const authCtrl = require("./../../../controller/api/v1/authController");
     app.put("/chargebee-update-network", verifyToken, authCtrl.chargeBeeUpdateNetwork);
     app.get("/chargebee-get-user-detail", verifyToken, authCtrl.chargeBeeGetUserDetail);
     app.get("/chargebee-subscription-detail", verifyToken, authCtrl.chargeBeeSubscriptionDetail);
+    app.get("/chargebee-subscription-list", verifyToken, authCtrl.chargeBeeSubscriptionList);
+    app.put("/chargebee-update-subscription", verifyToken, authCtrl.chargeBeeUpdateSubscription);
+    app.put("/chargebee-update-billing-detail", verifyToken, authCtrl.chargeBeeChangeBillingDetail);
     
 return app;
 })();
