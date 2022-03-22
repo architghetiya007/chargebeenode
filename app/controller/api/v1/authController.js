@@ -72,7 +72,6 @@ exports.chargeBeeListOfCustomer = async (req, res) => {
 						return res.status(200).json({ status: true, code: 201, message: 'user already created', data: result.list });
 					} else {
 						const sendmail =  common.send_mail(req.body.email, "OTP FOR CHARGEBEE VERIFY", random);
-						console.log(result.list[0],">>>>>>>>>>>>>>>>>>>");
 						chargebee.customer.update(result.list[0].customer.id, {
 							cf_validation_code: random
 						}).request(function (error, result) {
@@ -90,7 +89,6 @@ exports.chargeBeeListOfCustomer = async (req, res) => {
 				else {
 					const sendmail =  common.send_mail(req.body.email, "OTP FOR CHARGEBEE VERIFY", random);
 					var queryString  = "INSERT INTO address (email, address) VALUES ('"+ req.body.email+"','"+req.body.address +"')";
-					console.log(queryString,"queryString>>>>>>>>>>");
 					client.query(queryString ,(err,res) => {
 						if(err){
 							console.log(err,"Error While save into DB");
@@ -157,7 +155,6 @@ exports.verifyMail = async (req, res) => {
 exports.login = async (req, res) => {
 	try {
 		let encryptedPass = md5(req.body.password);
-		console.log(req.body, "body>>>>>>>>>>>>>>>>>>>>>");
 		chargebee.customer.list({
 			"email[is]": req.body.email
 		}).request(function (error, result) {
@@ -205,7 +202,6 @@ exports.login = async (req, res) => {
 
 exports.chargeBeeCheckout = async (req, res) => {
 	try {
-		console.log(req.body,"user>>>>>>>>>");
 		chargebee.hosted_page.checkout_new_for_items({
 			subscription_items : [
 				{
@@ -292,7 +288,6 @@ exports.chargeBeeUpdateNetwork = async (req, res) => {
 
 exports.chargeBeeGetUserDetail = async (req, res) => {
 	try {
-		console.log(req.user.email,"body>>>>>>>>>");
 		chargebee.customer.list({ 
 			"email[is]": req.user.email
 		}).request(async function (error, result) {
@@ -317,7 +312,6 @@ exports.chargeBeeGetUserDetail = async (req, res) => {
 
 exports.chargeBeeSubscriptionDetail = async (req, res) => {
 	try {
-		console.log(req.user.email,"body>>>>>>>>>");
 		chargebee.customer.list({ 
 			"email[is]": req.user.email
 		}).request(async function (error, result) {
@@ -342,7 +336,6 @@ exports.chargeBeeSubscriptionDetail = async (req, res) => {
 
 exports.chargeBeeSubscriptionList = async (req, res) => {
 	try {
-		console.log(req.user.id,"body>>>>>>>>>");
 		chargebee.subscription.list({ 
 			"customer_id[is]": req.user.id
 		}).request(async function (error, result) {
@@ -367,7 +360,6 @@ exports.chargeBeeSubscriptionList = async (req, res) => {
 
 exports.chargeBeeUpdateSubscription = async (req, res) => {
 	try {
-		console.log(req.user.id,"body>>>>>>>>>");
 		chargebee.hosted_page.checkout_existing_for_items({
 			subscription : {
 			  id : req.body.subscriptionId
@@ -376,8 +368,9 @@ exports.chargeBeeUpdateSubscription = async (req, res) => {
 			  {
 				item_price_id : req.body.itemPriceId,
 				quantity : 1,
-				// unit_price : 1000
-			  }]
+			  }],
+			  redirect_url:'http://localhost:4200/differ-my-profile',
+			  cancel_url:"http://localhost:4200/differ-my-profile"
 			}).request(async function (error, result) {
 			if (error) {
 				console.log(error);
@@ -400,14 +393,14 @@ exports.chargeBeeUpdateSubscription = async (req, res) => {
 
 exports.chargeBeeChangeBillingDetail = async (req, res) => {
 	try {
-		console.log(req.user.id,"body>>>>>>>>>");
-		chargebee.hosted_page.update_payment_method({
+		chargebee.hosted_page.manage_payment_sources({
 			card : {
 			  gateway_account_id : req.body.gatewayAccountId
 			  },
 			customer : {
 			  id : req.body.customerId
-			  }
+			  },
+			//   redirect_url:'http://localhost:4200/differ-my-profile'
 		  }).request(async function (error, result) {
 			if (error) {
 				console.log(error);

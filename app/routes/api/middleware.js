@@ -13,7 +13,6 @@ const verifyToken = (req, res, next) => {
             }
             else {
                 req.user = decoded;
-                console.log(req.user,"req.user");
                 next();
             }
         });
