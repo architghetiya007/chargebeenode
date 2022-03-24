@@ -99,7 +99,8 @@ exports.chargeBeeListOfCustomer = async (req, res) => {
 					})
 					chargebee.customer.create({
 						email: req.body.email,
-						cf_validation_code:random
+						cf_validation_code:random,
+						id:req.body.email
 					}).request(function (error, result) {
 						if (error) {
 							//handle error

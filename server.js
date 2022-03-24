@@ -16,9 +16,9 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: "true" }));
 app.use(bodyParser.json({ type: "application/vnd.api+json" }));
 app.use(express.static(path.join(__dirname,'/dist/angular')));
-app.use('/*',function(req,res){
-    res.sendFile(path.join(__dirname+'/dist/angular/index.html'))
-})
+// app.use('/*',function(req,res){
+//     res.sendFile(path.join(__dirname+'/dist/angular/index.html'))
+// })
 // routes ======================================================================
 var apiRouter = require('./app/routes/api/v1');
 app.use('/api/v1', apiRouter);
