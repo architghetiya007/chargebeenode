@@ -5,17 +5,19 @@ const chargebee = require("chargebee");
 const nodemailer = require("nodemailer");
 const client = require('./../../../../database');
 const axios = require('axios');
+const dotenv = require("dotenv").config();
 
 
 chargebee.configure({
-		site: "archittest2-test",
-		api_key: "test_Y2LUzyYO2EIlGKRnUMOGgEqRK3hcxiNa"
+		site: process.env.CHARGEBEE_SITE,
+		api_key:  process.env.CHARGEBEE_API_KEY
 });
 
 exports.chargeBeeItemList = async (req, res) => {
 	try {
 		chargebee.item_price.list({
-			limit: 100
+			"limit": 100,
+			"status[is]":"active"
 		}).request(function (error, result) {
 			if (error) {
 				//handle error
