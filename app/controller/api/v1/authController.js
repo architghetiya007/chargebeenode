@@ -102,6 +102,7 @@ exports.chargeBeeListOfCustomer = async (req, res) => {
 					chargebee.customer.create({
 						email: req.body.email,
 						cf_validation_code:random,
+						cf_address:req.body.address,
 						id:req.body.email
 					}).request(function (error, result) {
 						if (error) {
@@ -145,6 +146,30 @@ exports.verifyMail = async (req, res) => {
 				}
 				else {
 					res.status(200).json({ status: false, code: 400, message: 'Invalid OTP' });
+				}
+			}
+		});
+	}
+	catch (e) {
+		console.log(e, "????????");
+		res.status(200).json({ status: false, code: 400, message: 'catch error', data: e + "" });
+	}
+}
+
+exports.chargeBeeSignup = async (req, res) => {
+	try {
+		chargebee.customer.list({
+			"email[is]": req.body.email
+		}).request(function (error, result) {
+			if (error) {
+				console.log(error);
+				res.status(200).json({ status: false, code: 400, message: 'Error From Chargbee' });
+			}
+			else {
+				if (result.list.length > 0) {
+					res.status(200).json({ status: true, code: 200, message: 'user already exists',data:result.list });
+				} else {
+					res.status(200).json({ status: true, code: 204, message: 'Email Is not Register' });
 				}
 			}
 		});
@@ -417,6 +442,31 @@ exports.chargeBeeChangeBillingDetail = async (req, res) => {
 				}				
 			}
 		})
+	}
+	catch (e) {
+		console.log(e, "????????");
+		res.status(200).json({ status: false, code: 400, message: 'catch error', data: e + "" });
+	}
+}
+
+exports.chargeBeeSubscriptionList = async (req, res) => {
+	try {
+		chargebee.subscription.list({
+			"customer_id[is]":req.user.id
+		}).request(function (error, result) {
+			if (error) {
+				console.log(error);
+				res.status(200).json({ status: false, code: 400, message: 'Error from chargebee'});
+			}
+			else {
+				if ( result.list.length > 0 ) {
+					res.status(200).json({ status: true, code: 200, message: 'Subscription List', data: result.list });
+				}
+				else {
+					res.status(200).json({ status: false, code: 204, message: 'Subscription List' });
+				}
+			}
+		});
 	}
 	catch (e) {
 		console.log(e, "????????");

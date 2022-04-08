@@ -6,6 +6,7 @@ const authCtrl = require("./../../../controller/api/v1/authController");
 
     app.get("/chargebee-item-list", authCtrl.chargeBeeItemList);
     app.post("/chargebee-user-list", authCtrl.chargeBeeListOfCustomer);
+    app.post("/chargebee-signup", authCtrl.chargeBeeSignup);
     app.put("/verify-mail", authCtrl.verifyMail);
     app.put("/chargebee-save-user-detail", authCtrl.login);
     app.post("/chargebee-checkout", verifyToken, authCtrl.chargeBeeCheckout);
@@ -16,6 +17,6 @@ const authCtrl = require("./../../../controller/api/v1/authController");
     app.get("/chargebee-subscription-list", verifyToken, authCtrl.chargeBeeSubscriptionList);
     app.put("/chargebee-update-subscription", verifyToken, authCtrl.chargeBeeUpdateSubscription);
     app.put("/chargebee-update-billing-detail", verifyToken, authCtrl.chargeBeeChangeBillingDetail);
-    
+    app.post("/chargebee-subscription-list",verifyToken,authCtrl.chargeBeeSubscriptionList);
 return app;
 })();
