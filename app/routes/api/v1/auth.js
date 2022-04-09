@@ -18,5 +18,7 @@ const authCtrl = require("./../../../controller/api/v1/authController");
     app.put("/chargebee-update-subscription", verifyToken, authCtrl.chargeBeeUpdateSubscription);
     app.put("/chargebee-update-billing-detail", verifyToken, authCtrl.chargeBeeChangeBillingDetail);
     app.post("/chargebee-subscription-list",verifyToken,authCtrl.chargeBeeSubscriptionList);
+    app.post("/chargebee-address-compare",authCtrl.chargeBeeAddressCompare);
+
 return app;
 })();

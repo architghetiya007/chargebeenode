@@ -474,5 +474,30 @@ exports.chargeBeeSubscriptionList = async (req, res) => {
 	}
 }
 
+exports.chargeBeeAddressCompare = async (req, res) => {
+	try {
+		
+		var queryString  = "SELECT * FROM address_master where full_address ='"+req.body.address.trim()+"'";
+		console.log(queryString,"body")
+		client.query(queryString ,(err,result) => {
+			if(err){
+				console.log(err,"Error While save into DB");
+			}
+			else{
+				console.log(result.rows);
+				if(result.rows.length > 0) {
+					res.status(200).json({ status: true, code: 200, message: 'Address Match'});
+				}
+				else {
+					res.status(200).json({ status: false, code: 204, message: 'Address not match'});
+				}
+			}
+		})
+	}
+	catch (e) {
+		console.log(e, "????????");
+		res.status(200).json({ status: false, code: 400, message: 'catch error', data: e + "" });
+	}
+}
 
 
