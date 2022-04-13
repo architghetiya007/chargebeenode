@@ -228,6 +228,98 @@ exports.login = async (req, res) => {
 	}
 }
 
+exports.updateProfile = async (req, res) => {
+	try {
+		chargebee.customer.list({
+			"email[is]": req.user.id
+		}).request(function (error, result) {
+			if (error) {
+				console.log(error);
+				res.status(200).json({ status: false, code: 400, message: 'Error From Chargbee' });
+			}
+			else {
+				let updateObj = {
+					first_name: req.body.firstName,
+					last_name: req.body.lastName,
+					cf_birthday: req.body.birthday,
+					billing_address: {
+						line1: req.body.serviceAddress
+					}
+				};
+				if (result.list.length > 0) {
+					chargebee.customer.update(result.list[0].customer.id, updateObj).request(function (error, response) {
+						if (error) {
+							//handle error
+							console.log(error);
+							res.status(200).json({ status: false, code: 400, message: 'Error From Chargbee' });
+						} else {
+							res.status(200).json({ status: true, code: 200, message: 'Information updated successfully' });
+						}
+					});
+				} else {
+					res.status(200).json({ status: false, code: 401, message: 'Email Is not Register' });
+				}
+			}
+		});
+	}
+	catch (e) {
+		console.log(e, "????????");
+		res.status(200).json({ status: false, code: 400, message: 'catch error', data: e + "" });
+	}
+}
+
+exports.changePassword = async (req, res) => {
+	try {
+		let encryptedPass = md5(req.body.password);
+		let updateObj = { 
+			password: encryptedPass,
+		};
+		chargebee.customer.update(req.user.id, updateObj).request(function (error, response) {
+			if (error) {
+				//handle error
+				console.log(error);
+				res.status(200).json({ status: false, code: 400, message: 'Error From Chargbee' });
+			} else {
+				res.status(200).json({ status: true, code: 200, message: 'change password successfully' });
+			}
+		});
+	}
+	catch (e) {
+		console.log(e, "????????");
+		res.status(200).json({ status: false, code: 400, message: 'catch error', data: e + "" });
+	}
+}
+
+exports.DifferLogin = async (req, res) => {
+	try {
+		let encryptedPass = md5(req.body.password);
+		chargebee.customer.list({
+			"email[is]": req.body.email
+		}).request(function (error, result) {
+			if (error) {
+				console.log(error);
+				res.status(200).json({ status: false, code: 400, message: 'Error From Chargbee' });
+			}
+			else {
+				if (result.list.length > 0) {
+					if (result.list[0].customer.cf_password == encryptedPass) {
+						let token = jwt.sign({ id: result.list[0].customer.id, email: result.list[0].customer.email }, process.env.JWT_SECRET, { expiresIn: 60 * 60 * 24 });
+						res.status(200).json({ status: true, code: 200, message: 'Login successfully', data: { token: token } });
+					} else {
+						res.status(200).json({ status: false, code: 401, message: 'Email and password does not match' });
+					}
+				} else {
+					res.status(200).json({ status: false, code: 401, message: 'Email Is not Register' });
+				}
+			}
+		});
+	}
+	catch (e) {
+		console.log(e, "????????");
+		res.status(200).json({ status: false, code: 400, message: 'catch error', data: e + "" });
+	}
+}
+
 exports.chargeBeeCheckout = async (req, res) => {
 	try {
 		chargebee.hosted_page.checkout_new_for_items({

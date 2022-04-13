@@ -11,4 +11,3 @@ module.exports = {
     "room_master": require("./../app/models/room_master"),
     "device_master": require("./../app/models/device_master"),
 }
-return;
