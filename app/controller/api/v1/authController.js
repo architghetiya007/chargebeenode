@@ -270,7 +270,7 @@ exports.changePassword = async (req, res) => {
 	try {
 		let encryptedPass = md5(req.body.password);
 		let updateObj = { 
-			password: encryptedPass,
+			cf_password: encryptedPass,
 		};
 		chargebee.customer.update(req.user.id, updateObj).request(function (error, response) {
 			if (error) {
