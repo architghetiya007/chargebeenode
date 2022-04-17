@@ -1,6 +1,5 @@
 const nodemailer = require('nodemailer');
 const uuid4 = require('uuid4');
-const DB_HELPER = require('./db_helper');
 
 
 module.exports = {

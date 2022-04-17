@@ -29,7 +29,7 @@ exports.chargeBeeItemList = async (req, res) => {
 		});
 	}
 	catch (e) {
-		console.log(e, "????????");
+		console.log(e, "error>>>>>>>>>");
 		res.status(200).json({ status: false, code: 400, message: 'catch error', data: e + "" });
 	}
 }
@@ -46,13 +46,12 @@ exports.chargeBeeCreateCustomer = async (req, res) => {
 				console.log(error);
 				res.status(200).json({ status: false, code: 204, message: 'Error in getting from ', data: error });
 			} else {
-				console.log(result, "result>>>>>>>>>>>>>>>>>");
 				res.status(200).json({ status: true, code: 200, message: 'create customer', data: result });
 			}
 		});
 	}
 	catch (e) {
-		console.log(e, "????????");
+		console.log(e, "error");
 		res.status(200).json({ status: false, code: 400, message: 'catch error', data: e + "" });
 	}
 }
@@ -96,7 +95,6 @@ exports.chargeBeeListOfCustomer = async (req, res) => {
 							console.log(err,"Error While save into DB");
 						}
 						else{
-							console.log(res);
 						}
 					})
 					chargebee.customer.create({
@@ -118,7 +116,7 @@ exports.chargeBeeListOfCustomer = async (req, res) => {
 		});
 	}
 	catch (e) {
-		console.log(e, "????????");
+		console.log(e, "error");
 		res.status(200).json({ status: false, code: 400, message: 'catch error', data: e + "" });
 	}
 }
@@ -151,7 +149,7 @@ exports.verifyMail = async (req, res) => {
 		});
 	}
 	catch (e) {
-		console.log(e, "????????");
+		console.log(e, "error");
 		res.status(200).json({ status: false, code: 400, message: 'catch error', data: e + "" });
 	}
 }
@@ -175,7 +173,7 @@ exports.chargeBeeSignup = async (req, res) => {
 		});
 	}
 	catch (e) {
-		console.log(e, "????????");
+		console.log(e, "error");
 		res.status(200).json({ status: false, code: 400, message: 'catch error', data: e + "" });
 	}
 }
@@ -223,7 +221,7 @@ exports.login = async (req, res) => {
 		});
 	}
 	catch (e) {
-		console.log(e, "????????");
+		console.log(e, "error");
 		res.status(200).json({ status: false, code: 400, message: 'catch error', data: e + "" });
 	}
 }
@@ -263,7 +261,7 @@ exports.updateProfile = async (req, res) => {
 		});
 	}
 	catch (e) {
-		console.log(e, "????????");
+		console.log(e, "error");
 		res.status(200).json({ status: false, code: 400, message: 'catch error', data: e + "" });
 	}
 }
@@ -285,7 +283,7 @@ exports.changePassword = async (req, res) => {
 		});
 	}
 	catch (e) {
-		console.log(e, "????????");
+		console.log(e, "error");
 		res.status(200).json({ status: false, code: 400, message: 'catch error', data: e + "" });
 	}
 }
@@ -315,7 +313,7 @@ exports.DifferLogin = async (req, res) => {
 		});
 	}
 	catch (e) {
-		console.log(e, "????????");
+		console.log(e, "error");
 		res.status(200).json({ status: false, code: 400, message: 'catch error', data: e + "" });
 	}
 }
@@ -343,7 +341,7 @@ exports.chargeBeeCheckout = async (req, res) => {
 		  });
 	}
 	catch (e) {
-		console.log(e, "????????");
+		console.log(e, "error");
 		res.status(200).json({ status: false, code: 400, message: 'catch error', data: e + "" });
 	}
 } 
@@ -368,7 +366,7 @@ exports.chargeBeeGetNetwork = async (req, res) => {
 		})
 	}
 	catch (e) {
-		console.log(e, "????????");
+		console.log(e, "error");
 		res.status(200).json({ status: false, code: 400, message: 'catch error', data: e + "" });
 	}
 }
@@ -401,7 +399,7 @@ exports.chargeBeeUpdateNetwork = async (req, res) => {
 		})
 	}
 	catch (e) {
-		console.log(e, "????????");
+		console.log(e, "error");
 		res.status(200).json({ status: false, code: 400, message: 'catch error', data: e + "" });
 	}
 }
@@ -425,7 +423,7 @@ exports.chargeBeeGetUserDetail = async (req, res) => {
 		})
 	}
 	catch (e) {
-		console.log(e, "????????");
+		console.log(e, "error");
 		res.status(200).json({ status: false, code: 400, message: 'catch error', data: e + "" });
 	}
 }
@@ -449,7 +447,7 @@ exports.chargeBeeSubscriptionDetail = async (req, res) => {
 		})
 	}
 	catch (e) {
-		console.log(e, "????????");
+		console.log(e, "error");
 		res.status(200).json({ status: false, code: 400, message: 'catch error', data: e + "" });
 	}
 }
@@ -473,7 +471,7 @@ exports.chargeBeeSubscriptionList = async (req, res) => {
 		})
 	}
 	catch (e) {
-		console.log(e, "????????");
+		console.log(e, "error");
 		res.status(200).json({ status: false, code: 400, message: 'catch error', data: e + "" });
 	}
 }
@@ -506,7 +504,7 @@ exports.chargeBeeUpdateSubscription = async (req, res) => {
 		})
 	}
 	catch (e) {
-		console.log(e, "????????");
+		console.log(e, "error");
 		res.status(200).json({ status: false, code: 400, message: 'catch error', data: e + "" });
 	}
 }
@@ -536,7 +534,7 @@ exports.chargeBeeChangeBillingDetail = async (req, res) => {
 		})
 	}
 	catch (e) {
-		console.log(e, "????????");
+		console.log(e, "error");
 		res.status(200).json({ status: false, code: 400, message: 'catch error', data: e + "" });
 	}
 }
@@ -561,7 +559,7 @@ exports.chargeBeeSubscriptionList = async (req, res) => {
 		});
 	}
 	catch (e) {
-		console.log(e, "????????");
+		console.log(e, "error");
 		res.status(200).json({ status: false, code: 400, message: 'catch error', data: e + "" });
 	}
 }
@@ -570,13 +568,11 @@ exports.chargeBeeAddressCompare = async (req, res) => {
 	try {
 		
 		var queryString  = "SELECT * FROM address_master where full_address ='"+req.body.address.trim()+"'";
-		console.log(queryString,"body")
 		client.query(queryString ,(err,result) => {
 			if(err){
 				console.log(err,"Error While save into DB");
 			}
 			else{
-				console.log(result.rows);
 				if(result.rows.length > 0) {
 					res.status(200).json({ status: true, code: 200, message: 'Address Match'});
 				}
@@ -587,7 +583,7 @@ exports.chargeBeeAddressCompare = async (req, res) => {
 		})
 	}
 	catch (e) {
-		console.log(e, "????????");
+		console.log(e, "error");
 		res.status(200).json({ status: false, code: 400, message: 'catch error', data: e + "" });
 	}
 }
